@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tìm kiếm sản phẩm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .header h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    /* Search Box */
+    .search-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+      margin-bottom: 24px;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 12px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .search-btn {
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #2563eb;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .search-btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .search-btn:active {
+      transform: scale(0.98);
+    }
+
+    .search-btn:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    /* Results section */
+    .results-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Product Card */
+    .product-card {
+      background: #ffffff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.08);
+    }
+
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .product-id {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .product-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #16a34a;
+      white-space: nowrap;
+    }
+
+    /* Status notices */
+    .status-box {
+      text-align: center;
+      padding: 36px 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .status-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .status-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .status-desc {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    /* Error alert */
+    .error-box {
+      background-color: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      padding: 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .error-box .error-icon {
+      font-size: 1.5rem;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Hệ Thống Tra Cứu Sản Phẩm</h1>
+      <p>Ứng dụng Full-stack minh họa tìm kiếm với Express.js & Fetch API</p>
+    </header>
+
+    <!-- Search Form -->
+    <div class="search-card">
+      <form id="searchForm" class="search-form">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Nhập tên sản phẩm cần tìm (ví dụ: bàn phím, chuột...)" 
+          autocomplete="off"
+        />
+        <button type="submit" id="searchBtn" class="search-btn">
+          <span id="btnText">Tìm kiếm</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Notification / Status / Results Area -->
+    <div id="resultsContainer" class="results-container">
+      <!-- Mặc định ban đầu hiển thị hướng dẫn -->
+      <div class="status-box">
+        <div class="status-icon">🔍</div>
+        <div class="status-title">Bắt đầu tìm kiếm</div>
+        <div class="status-desc">Nhập từ khóa và bấm "Tìm kiếm" để tra cứu dữ liệu sản phẩm.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
