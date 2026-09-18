@@ -3,11 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tìm kiếm sản phẩm</title>
+  <title>Quản Lý & Tìm Kiếm Sản Phẩm Full-Stack</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #16a34a;
+      --success-hover: #15803d;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --warning: #d97706;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -16,72 +31,90 @@
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: #f1f5f9;
-      color: #1e293b;
+      background-color: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 16px;
+      padding: 32px 16px;
     }
 
     .container {
       width: 100%;
-      max-width: 720px;
+      max-width: 1120px;
+      margin: 0 auto;
     }
 
+    /* Common SVG Icon Styles */
+    .icon {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .icon-sm {
+      width: 15px;
+      height: 15px;
+    }
+
+    .icon-lg {
+      width: 48px;
+      height: 48px;
+      stroke-width: 1.5;
+    }
+
+    .icon-spin {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Header */
     .header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .header h1 {
-      font-size: 1.875rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 8px;
-    }
-
-    .header p {
-      color: #64748b;
-      font-size: 0.95rem;
-    }
-
-    /* Search Box */
-    .search-card {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 14px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
       margin-bottom: 24px;
     }
 
-    .search-form {
-      display: flex;
-      gap: 12px;
+    .header-info h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
     }
 
-    .search-input {
-      flex: 1;
-      padding: 12px 16px;
-      font-size: 1rem;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 10px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+    .header-info p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
     }
 
-    .search-input:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    }
-
-    .search-btn {
-      padding: 12px 24px;
-      font-size: 1rem;
+    .badge-count {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 3px 12px;
+      border-radius: 999px;
       font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .btn-create {
+      background-color: var(--success);
       color: #ffffff;
-      background-color: #2563eb;
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      font-weight: 600;
       border: none;
       border-radius: 10px;
       cursor: pointer;
@@ -91,160 +124,584 @@
       transition: background-color 0.2s, transform 0.1s;
     }
 
-    .search-btn:hover {
-      background-color: #1d4ed8;
+    .btn-create:hover {
+      background-color: var(--success-hover);
     }
 
-    .search-btn:active {
+    .btn-create:active {
       transform: scale(0.98);
     }
 
-    .search-btn:disabled {
-      background-color: #94a3b8;
-      cursor: not-allowed;
+    /* Controls Bar (Search + Filter) */
+    .controls-card {
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
     }
 
-    /* Results section */
-    .results-container {
+    .search-form {
+      flex: 1;
+      min-width: 280px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-search {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-search:hover {
+      background: var(--primary-hover);
+    }
+
+    .category-select {
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-reset {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.15s;
+    }
+
+    .btn-reset:hover {
+      background: #e2e8f0;
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-    }
-
-    /* Product Card */
-    .product-card {
-      background: #ffffff;
-      padding: 16px 20px;
-      border-radius: 12px;
-      display: flex;
       justify-content: space-between;
-      align-items: center;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      gap: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       transition: transform 0.15s, box-shadow 0.15s;
     }
 
     .product-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
     }
 
-    .product-info {
+    .card-top {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
     }
 
-    .product-id {
+    .card-id {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+
+    .card-category {
       font-size: 0.75rem;
       font-weight: 600;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 3px 8px;
+      border-radius: 6px;
     }
 
-    .product-name {
-      font-size: 1.05rem;
+    .card-name {
+      font-size: 1.02rem;
       font-weight: 600;
-      color: #0f172a;
+      color: var(--text);
+      line-height: 1.4;
+      min-height: 44px;
     }
 
-    .product-price {
-      font-size: 1.1rem;
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .card-price {
+      font-size: 1.15rem;
       font-weight: 700;
-      color: #16a34a;
-      white-space: nowrap;
+      color: var(--success);
     }
 
-    /* Status notices */
+    .card-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background-color 0.15s;
+    }
+
+    .btn-edit {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .btn-edit:hover {
+      background: #dbeafe;
+    }
+
+    .btn-delete {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .btn-delete:hover {
+      background: #fee2e2;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .page-btn {
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .page-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0 8px;
+    }
+
+    /* Status boxes */
     .status-box {
       text-align: center;
-      padding: 36px 20px;
-      background: #ffffff;
+      padding: 48px 20px;
+      background: var(--card-bg);
       border-radius: 12px;
       border: 1px dashed #cbd5e1;
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .status-icon {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
+    .status-icon-wrapper {
+      color: #94a3b8;
+      margin-bottom: 4px;
     }
 
     .status-title {
       font-weight: 600;
-      font-size: 1.05rem;
-      margin-bottom: 4px;
+      font-size: 1.1rem;
+      color: var(--text);
     }
 
     .status-desc {
       font-size: 0.9rem;
-      color: #64748b;
+      color: var(--text-muted);
     }
 
-    /* Error alert */
     .error-box {
       background-color: #fef2f2;
       border: 1px solid #fca5a5;
       color: #991b1b;
-      padding: 16px;
+      padding: 18px;
       border-radius: 10px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      grid-column: 1 / -1;
     }
 
-    .error-box .error-icon {
-      font-size: 1.5rem;
+    .error-box-icon {
+      color: #dc2626;
+      flex-shrink: 0;
     }
 
-    .loading-spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid #ffffff;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+    /* Modal dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 16px;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      transform: translateY(10px);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #94a3b8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.15s, background-color 0.15s;
+    }
+
+    .btn-close:hover {
+      color: #475569;
+      background-color: #f1f5f9;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn-cancel {
+      background: #f1f5f9;
+      color: #475569;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-save {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-save:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: #ffffff;
+      color: #0f172a;
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 5px solid var(--primary);
+      font-size: 0.92rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.toast-success { border-left-color: var(--success); }
+    .toast.toast-success .toast-icon { color: var(--success); }
+    .toast.toast-error { border-left-color: var(--danger); }
+    .toast.toast-error .toast-icon { color: var(--danger); }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Header -->
     <header class="header">
-      <h1>Hệ Thống Tra Cứu Sản Phẩm</h1>
-      <p>Ứng dụng Full-stack minh họa tìm kiếm với Express.js & Fetch API</p>
+      <div class="header-info">
+        <h1>Quản Lý & Tra Cứu Sản Phẩm</h1>
+        <p>Hệ thống Full-Stack hoàn chỉnh với CRUD (Thêm, Xóa, Sửa, Tìm kiếm) và Phân trang</p>
+      </div>
+      <div>
+        <button id="btnOpenCreateModal" class="btn-create">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Thêm sản phẩm mới
+        </button>
+      </div>
     </header>
 
-    <!-- Search Form -->
-    <div class="search-card">
+    <!-- Controls (Search + Filter Category) -->
+    <div class="controls-card">
       <form id="searchForm" class="search-form">
         <input 
           type="text" 
           id="searchInput" 
           class="search-input" 
-          placeholder="Nhập tên sản phẩm cần tìm (ví dụ: bàn phím, chuột...)" 
+          placeholder="Nhập tên sản phẩm cần tìm (ví dụ: màn hình, bàn phím, ram...)" 
           autocomplete="off"
         />
-        <button type="submit" id="searchBtn" class="search-btn">
-          <span id="btnText">Tìm kiếm</span>
+        <button type="submit" id="searchBtn" class="btn-search">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Tìm kiếm
         </button>
       </form>
-    </div>
 
-    <!-- Notification / Status / Results Area -->
-    <div id="resultsContainer" class="results-container">
-      <!-- Mặc định ban đầu hiển thị hướng dẫn -->
-      <div class="status-box">
-        <div class="status-icon">🔍</div>
-        <div class="status-title">Bắt đầu tìm kiếm</div>
-        <div class="status-desc">Nhập từ khóa và bấm "Tìm kiếm" để tra cứu dữ liệu sản phẩm.</div>
+      <select id="categoryFilter" class="category-select">
+        <option value="all">Tất cả danh mục</option>
+      </select>
+
+      <button id="btnResetFilter" class="btn-reset" title="Xem toàn bộ sản phẩm">
+        <svg class="icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        Làm mới
+      </button>
+
+      <div style="margin-left: auto;">
+        <span id="totalBadge" class="badge-count">Đang tải...</span>
       </div>
     </div>
+
+    <!-- Product Grid Area -->
+    <div id="productGrid" class="product-grid">
+      <!-- Sẽ được render động bằng JavaScript -->
+    </div>
+
+    <!-- Pagination -->
+    <div id="paginationContainer" class="pagination">
+      <!-- Nút phân trang render bằng JavaScript -->
+    </div>
   </div>
+
+  <!-- MODAL THÊM / SỬA SẢN PHẨM -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <span id="modalTitleText">Thêm sản phẩm mới</span>
+        </h3>
+        <button id="btnCloseModal" class="btn-close" aria-label="Đóng">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <form id="productForm">
+        <input type="hidden" id="productId" value="" />
+
+        <div class="form-group">
+          <label class="form-label" for="productName">Tên sản phẩm *</label>
+          <input 
+            type="text" 
+            id="productName" 
+            class="form-control" 
+            placeholder="Ví dụ: Bàn phím cơ Akko 3087" 
+            required 
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="productPrice">Giá bán (VNĐ) *</label>
+          <input 
+            type="number" 
+            id="productPrice" 
+            class="form-control" 
+            placeholder="Ví dụ: 890000" 
+            min="0" 
+            step="1000" 
+            required 
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="productCategory">Danh mục</label>
+          <input 
+            type="text" 
+            id="productCategory" 
+            class="form-control" 
+            placeholder="Ví dụ: Bàn phím & Chuột" 
+            list="categoryDatalist"
+          />
+          <datalist id="categoryDatalist"></datalist>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="btnCancelModal" class="btn-cancel">Hủy bỏ</button>
+          <button type="submit" id="btnSaveProduct" class="btn-save">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Lưu lại
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
 
   <script src="script.js"></script>
 </body>
